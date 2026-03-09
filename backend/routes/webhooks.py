@@ -87,13 +87,20 @@ async def zoom_webhook(request: Request):
 
     # FIX BUG 6: async with guarantees connection release even on error
     async with pool.acquire() as conn:
-        # Resolve missing email: check if we already know this person by name
+        # Resolve missing email via aliases → user_identities → fallback to name
         if not email and user_name != "Anonymous":
-            known_email = await conn.fetchval(
-                "SELECT canonical_email FROM user_identities WHERE display_name = $1 LIMIT 1",
+            # Step 1: Check name_aliases (handles multiple name variants like "sham" → email)
+            canonical = await conn.fetchval(
+                "SELECT canonical_email FROM name_aliases WHERE display_name = $1",
                 user_name,
             )
-            email = known_email or user_name  # fall back to name if truly unknown
+            if not canonical:
+                # Step 2: Fallback to user_identities exact display_name match
+                canonical = await conn.fetchval(
+                    "SELECT canonical_email FROM user_identities WHERE display_name = $1 LIMIT 1",
+                    user_name,
+                )
+            email = canonical or user_name  # Step 3: fall back to name if truly unknown
 
         async with conn.transaction():
             if event == "meeting.participant_joined":

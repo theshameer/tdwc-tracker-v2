@@ -5,9 +5,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.db import init_pool, close_pool
+from backend.db import init_pool, close_pool, get_pool
 from backend.routes import webhooks, leaderboard, stats, health
 from backend.services.stale_cleanup import close_stale_segments_periodically
+from backend.services.migrate_aliases import run_alias_migration
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,6 +22,13 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_pool()
     logger.info("Database pool initialised")
+
+    # Run alias migration (idempotent — safe on every restart)
+    try:
+        await run_alias_migration(get_pool())
+        logger.info("Alias migration complete")
+    except Exception as exc:
+        logger.error("Alias migration failed (non-fatal): %s", exc)
 
     # Background task: close segments that have been open too long
     cleanup_task = asyncio.create_task(close_stale_segments_periodically())
