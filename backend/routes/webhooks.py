@@ -63,9 +63,11 @@ async def zoom_webhook(request: Request):
     # Session identifier: prefer uuid (unique per meeting instance)
     session_id = str(obj.get("uuid") or obj.get("id") or "unknown")
 
-    # User identification
-    email = participant.get("email") or "unknown"
+    # User identification — if no email, use name as the grouping key
     user_name = participant.get("user_name") or "Anonymous"
+    email = participant.get("email") or ""
+    if not email or email.lower() in ("unknown", ""):
+        email = user_name
     participant_id = participant.get("user_id") or participant.get("id") or None
 
     # FIX BUG 1: Use Zoom's actual timestamp, not server time

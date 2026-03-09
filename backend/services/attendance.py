@@ -44,7 +44,7 @@ async def process_join_event(
         logger.warning("Failed to log webhook event: %s", exc)
 
     # Upsert user identity (keeps display_name up to date)
-    if email != "unknown":
+    if email and email != "unknown":
         await conn.execute(
             """
             INSERT INTO user_identities (canonical_email, display_name)
