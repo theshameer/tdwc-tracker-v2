@@ -63,12 +63,15 @@ async def zoom_webhook(request: Request):
     # Session identifier: prefer uuid (unique per meeting instance)
     session_id = str(obj.get("uuid") or obj.get("id") or "unknown")
 
-    # User identification — if no email, use name as the grouping key
+    # User identification
     user_name = participant.get("user_name") or "Anonymous"
     email = participant.get("email") or ""
-    if not email or email.lower() in ("unknown", ""):
-        email = user_name
     participant_id = participant.get("user_id") or participant.get("id") or None
+
+    # If email is missing, look up user_identities to find a known email for this name.
+    # Only fall back to using the name as identifier if no prior email is found.
+    if not email or email.lower() in ("unknown", ""):
+        email = ""  # will be resolved below with DB lookup
 
     # FIX BUG 1: Use Zoom's actual timestamp, not server time
     if event == "meeting.participant_joined":
@@ -84,6 +87,14 @@ async def zoom_webhook(request: Request):
 
     # FIX BUG 6: async with guarantees connection release even on error
     async with pool.acquire() as conn:
+        # Resolve missing email: check if we already know this person by name
+        if not email and user_name != "Anonymous":
+            known_email = await conn.fetchval(
+                "SELECT canonical_email FROM user_identities WHERE display_name = $1 LIMIT 1",
+                user_name,
+            )
+            email = known_email or user_name  # fall back to name if truly unknown
+
         async with conn.transaction():
             if event == "meeting.participant_joined":
                 result = await process_join_event(

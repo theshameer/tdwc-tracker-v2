@@ -5,7 +5,15 @@
       "Bash(pip3 list)",
       "Bash(pip3 install fastapi uvicorn)",
       "Bash(DATABASE_URL=\"postgresql://test:test@localhost/test\" ZOOM_WEBHOOK_SECRET=\"test_secret\" python3 -c \":*)",
-      "Bash(pip3 install httpx)"
+      "Bash(pip3 install httpx)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npm run build)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s \"https://tdwc-zoom-tracker-production.up.railway.app/leaderboard/daily\")",
+      "Bash(python3 -c \":*)",
+      "Bash(curl -s \"https://tdwc-zoom-tracker-production.up.railway.app/leaderboard/monthly\")",
+      "Bash(python3 -c \"import asyncpg; print\\(''asyncpg available''\\)\")",
+      "Bash(curl -s \"https://tdwc-zoom-tracker-production.up.railway.app/leaderboard/monthly?month=2026-02\")"
     ]
   }
 }

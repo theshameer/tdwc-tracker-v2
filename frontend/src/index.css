@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/* ============================================
+   THE DEEP WORK CLUB — Design Tokens
+   ============================================ */
+
+@theme {
+  /* Navy palette */
+  --color-navy-deep: #070b14;
+  --color-navy-base: #0c1220;
+  --color-navy-surface: #111827;
+  --color-navy-elevated: #1a2332;
+  --color-navy-light: #243044;
+
+  /* Gold palette */
+  --color-gold: #d4a843;
+  --color-gold-light: #e8c96a;
+  --color-gold-dim: #b8922e;
+  --color-gold-muted: #8b7028;
+
+  /* Cream / text */
+  --color-cream: #f5f0e8;
+  --color-cream-muted: #c4bfb3;
+  --color-cream-faint: #8a857b;
+
+  /* Accent */
+  --color-accent-blue: #3b82f6;
+  --color-accent-green: #22c55e;
+  --color-accent-red: #ef4444;
+
+  /* Semantic */
+  --color-border: #1e293b;
+  --color-border-gold: rgba(212, 168, 67, 0.2);
+
+  /* Fonts */
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================
+   Base styles
+   ============================================ */
+
+body {
+  background-color: var(--color-navy-deep);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Gold gradient text */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #e8c96a 0%, #d4a843 50%, #b8922e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+.glass-subtle {
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* Elevated shadow */
+.shadow-elevated {
+  box-shadow:
+    0 0 0 1px rgba(30, 41, 59, 0.5),
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Progress bar glow */
+.bar-glow {
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.3);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fade-up 0.5s ease-out 0.1s both;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fade-up 0.5s ease-out 0.2s both;
+}
+
+.animate-fade-up-delay-3 {
+  animation: fade-up 0.5s ease-out 0.3s both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 168, 67, 0.05) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 67, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 168, 67, 0.4);
+}
