@@ -26,7 +26,7 @@ async def resolve_email(conn: asyncpg.Connection, raw_email: str, user_name: str
     3. Check user_identities for display_name → canonical_email.
     4. Fall back to user_name as identifier.
     """
-    if raw_email and raw_email.lower() not in ("unknown", ""):
+    if raw_email and raw_email.lower() not in ("unknown", "") and "@" in raw_email:
         return raw_email
 
     if user_name == "Anonymous":
@@ -173,3 +173,15 @@ def test_multiple_aliases_same_email(conn):
     for name in ["Shameer A", "Shameer", "sham"]:
         results.add(run(resolve_email(conn, "", name)))
     assert results == {"business.shamalam@gmail.com"}
+
+
+def test_name_as_email_field_resolves_via_alias(conn):
+    """When Zoom sends the display name in the email field (no @), resolve via alias."""
+    result = run(resolve_email(conn, "sham", "sham"))
+    assert result == "business.shamalam@gmail.com"
+
+
+def test_name_as_email_field_unknown_person(conn):
+    """When Zoom sends a non-email string for an unknown person, fall back to name."""
+    result = run(resolve_email(conn, "NewPerson", "NewPerson"))
+    assert result == "NewPerson"

@@ -68,9 +68,9 @@ async def zoom_webhook(request: Request):
     email = participant.get("email") or ""
     participant_id = participant.get("user_id") or participant.get("id") or None
 
-    # If email is missing, look up user_identities to find a known email for this name.
-    # Only fall back to using the name as identifier if no prior email is found.
-    if not email or email.lower() in ("unknown", ""):
+    # If email is missing or not a real email, clear it for alias resolution below.
+    # Zoom sometimes sends display names or device names in the email field.
+    if not email or email.lower() in ("unknown", "") or "@" not in email:
         email = ""  # will be resolved below with DB lookup
 
     # FIX BUG 1: Use Zoom's actual timestamp, not server time
