@@ -80,9 +80,6 @@ CREATE INDEX IF NOT EXISTS idx_segments_open
 CREATE INDEX IF NOT EXISTS idx_segments_join_time
     ON attendance_segments (join_time);
 
-CREATE INDEX IF NOT EXISTS idx_segments_join_date
-    ON attendance_segments ((join_time::date));
-
 CREATE INDEX IF NOT EXISTS idx_segments_user_email
     ON attendance_segments (user_email);
 
@@ -181,10 +178,10 @@ async def run_migration() -> None:
         )
 
         old_total = await conn.fetchval(
-            "SELECT ROUND(SUM(duration_minutes), 1) FROM attendance WHERE duration_minutes > 0"
+            "SELECT ROUND(SUM(duration_minutes)::numeric, 1) FROM attendance WHERE duration_minutes > 0"
         )
         new_total = await conn.fetchval(
-            "SELECT ROUND(SUM(duration_seconds / 60.0), 1) FROM attendance_segments WHERE duration_seconds > 0"
+            "SELECT ROUND((SUM(duration_seconds) / 60.0)::numeric, 1) FROM attendance_segments WHERE duration_seconds > 0"
         )
         logger.info(f"Duration check: old={old_total} min, new={new_total} min")
 
