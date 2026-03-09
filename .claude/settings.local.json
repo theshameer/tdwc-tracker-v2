@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import ast; import os:*)",
+      "Bash(pip3 list)",
+      "Bash(pip3 install fastapi uvicorn)",
+      "Bash(DATABASE_URL=\"postgresql://test:test@localhost/test\" ZOOM_WEBHOOK_SECRET=\"test_secret\" python3 -c \":*)",
+      "Bash(pip3 install httpx)"
+    ]
+  }
+}
